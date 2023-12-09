@@ -1,3 +1,5 @@
 # CompressX Changelog
 
-## [Initial Version] - 2023-12-09
+## [Added Raycast support] - 2023-12-09
+
+Initial version to support integration between Raycast and CompressX
