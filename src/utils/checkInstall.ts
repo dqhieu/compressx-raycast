@@ -5,7 +5,7 @@ async function isCompressXInstalled() {
   return applications.some(({ bundleId }) => bundleId === "com.hieudinh.CompressX");
 }
 
-export async function checkCompressXInstallation() : Promise<boolean> {
+export async function checkCompressXInstallation(): Promise<boolean> {
   const isInstalled = await isCompressXInstalled();
   if (!isInstalled) {
     const options: Toast.Options = {
