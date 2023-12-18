@@ -19,6 +19,4 @@ CompressX needs to be installed in order to use this extension
 
 ## Screen record
 
-<video controls>
-  <source src="https://github.com/dqhieu/compressx-raycast/raw/main/metadata/raycast-demo.mp4" type="video/mp4">
-</video>
+![CompressX](https://github.com/dqhieu/compressx-raycast/raw/main/metadata/raycast-demo.mp4)
