@@ -19,4 +19,4 @@ CompressX needs to be installed in order to use this extension
 
 ## Screen record
 
-![CompressX](https://github.com/dqhieu/compressx-raycast/raw/main/metadata/raycast-demo.mp4)
+https://github.com/dqhieu/compressx-raycast/assets/8291457/af8d77a8-c2e7-4e69-a7e1-ce2f61b67067
