@@ -12,15 +12,14 @@ export default async function main() {
 
   try {
     filePaths = (await getSelectedFinderItems()).map((f) => f.path);
-    if (filePaths.length > 0) {
-      const filePath = filePaths[0];
-      const url = `compressx://open?path=file://${filePath}&autoCompress=true`;
-      await showToast({
+    for (const path of filePaths) {
+      const url = `compressx://open?path=file://${path}&autoCompress=true`;
+      exec(`open "${url}"`);
+    }
+    await showToast({
         style: Toast.Style.Success,
         title: "Compressing with CompressX",
       });
-      exec(`open "${url}"`);
-    }
   } catch (e) {
     await showToast({
       style: Toast.Style.Failure,
