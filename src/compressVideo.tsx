@@ -13,13 +13,13 @@ export default async function main() {
   try {
     filePaths = (await getSelectedFinderItems()).map((f) => f.path);
     for (const path of filePaths) {
-      const url = `compressx://open?path=file://${path}&autoCompress=true`;
+      const url = `compressx://open?path=file://${path}`;
       exec(`open "${url}"`);
     }
     await showToast({
-        style: Toast.Style.Success,
-        title: "Compressing with CompressX",
-      });
+      style: Toast.Style.Success,
+      title: "Compressing with CompressX",
+    });
   } catch (e) {
     await showToast({
       style: Toast.Style.Failure,
