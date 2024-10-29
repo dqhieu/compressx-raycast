@@ -5,20 +5,31 @@ import { useState, useEffect } from "react";
 import path from "path";
 
 export default function Command() {
-  const [isInstalled, setIsInstalled] = useState<boolean | null>(null);
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [fileType, setFileType] = useState<"video" | "image" | null>(null);
+  const [isInstalled, setIsInstalled] = useState<boolean | null>(true);
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const [fileTypes, setFileTypes] = useState<Set<"video" | "image">>(new Set());
   const [quality, setQuality] = useState<string>("high");
   const [videoFormat, setVideoFormat] = useState<string>("same");
   const [imageFormat, setImageFormat] = useState<string>("same");
 
   useEffect(() => {
-    checkCompressXInstallation().then(setIsInstalled);
+    // checkCompressXInstallation().then(setIsInstalled);
     getSelectedFinderItems().then((items) => {
       if (items.length > 0) {
-        setSelectedFile(items[0].path);
-        const ext = path.extname(items[0].path).toLowerCase();
-        setFileType(ext.match(/\.(mp4|mov|avi|mkv|webm)$/) ? "video" : "image");
+        const paths = items.map(item => item.path);
+        setSelectedFiles(paths);
+        
+        // Determine file types
+        const types = new Set<"video" | "image">();
+        paths.forEach(filePath => {
+          const ext = path.extname(filePath).toLowerCase();
+          if (ext.match(/\.(mp4|mov|avi|mkv|webm)$/)) {
+            types.add("video");
+          } else {
+            types.add("image");
+          }
+        });
+        setFileTypes(types);
       }
     });
     
@@ -54,21 +65,36 @@ export default function Command() {
     { title: "WebP", value: "webp" },
   ];
 
-  const compressFile = async (values: { quality: string; format: string }) => {
-    if (!selectedFile) return;
+  const compressFiles = async (values: { quality: string; videoFormat?: string; imageFormat?: string }) => {
+    if (selectedFiles.length === 0) return;
 
     try {
-      const url = `compressx://open?path=file://${selectedFile}&quality=${values.quality}&format=${values.format}`;
+      const paths = selectedFiles.join("|");
+      let url = `compressx://open?path=${paths}&quality=${values.quality}`;
+      
+      // Add format parameters if they exist
+      if (values.videoFormat && fileTypes.has("video")) {
+        url += `&videoFormat=${values.videoFormat}`;
+      }
+      if (values.imageFormat && fileTypes.has("image")) {
+        url += `&imageFormat=${values.imageFormat}`;
+      }
+      
       exec(`open "${url}"`);
       
       // Save user preferences
       await LocalStorage.setItem("savedQuality", values.quality);
-      await LocalStorage.setItem(fileType === "video" ? "savedVideoFormat" : "savedImageFormat", values.format);
+      if (values.videoFormat) {
+        await LocalStorage.setItem("savedVideoFormat", values.videoFormat);
+      }
+      if (values.imageFormat) {
+        await LocalStorage.setItem("savedImageFormat", values.imageFormat);
+      }
       
       await showToast({
         style: Toast.Style.Success,
         title: "Sent to CompressX for compressing",
-        message: `Quality: ${values.quality}, Format: ${values.format}`,
+        message: `${selectedFiles.length} files selected`,
       });
       await popToRoot();
     } catch (e) {
@@ -80,7 +106,7 @@ export default function Command() {
     }
   };
 
-  if (isInstalled === null || !selectedFile || !fileType) {
+  if (isInstalled === null || selectedFiles.length === 0 || fileTypes.size === 0) {
     return <Form isLoading={true} />;
   }
 
@@ -102,7 +128,7 @@ export default function Command() {
     <Form
       actions={
         <ActionPanel>
-          <Action.SubmitForm title="Compress File" onSubmit={compressFile} />
+          <Action.SubmitForm title="Compress Files" onSubmit={compressFiles} />
         </ActionPanel>
       }
     >
@@ -117,16 +143,33 @@ export default function Command() {
         ))}
       </Form.Dropdown>
 
-      <Form.Dropdown 
-        id="format" 
-        title="Output Format" 
-        value={fileType === "video" ? videoFormat : imageFormat}
-        onChange={(newValue) => fileType === "video" ? setVideoFormat(newValue) : setImageFormat(newValue)}
-      >
-        {(fileType === "video" ? videoFormatOptions : imageFormatOptions).map((option) => (
-          <Form.Dropdown.Item key={option.value} value={option.value} title={option.title} />
-        ))}
-      </Form.Dropdown>
+      {fileTypes.has("video") && (
+        <Form.Dropdown 
+          id="videoFormat" 
+          title="Video Format" 
+          value={videoFormat}
+          onChange={setVideoFormat}
+        >
+          {videoFormatOptions.map((option) => (
+            <Form.Dropdown.Item key={option.value} value={option.value} title={option.title} />
+          ))}
+        </Form.Dropdown>
+      )}
+
+      {fileTypes.has("image") && (
+        <Form.Dropdown 
+          id="imageFormat" 
+          title="Image Format" 
+          value={imageFormat}
+          onChange={setImageFormat}
+        >
+          {imageFormatOptions.map((option) => (
+            <Form.Dropdown.Item key={option.value} value={option.value} title={option.title} />
+          ))}
+        </Form.Dropdown>
+      )}
+
+      <Form.Description text={`Selected ${selectedFiles.length} file${selectedFiles.length > 1 ? 's' : ''}`} />
     </Form>
   );
 }

@@ -2,7 +2,7 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "compressx",
   "title": "CompressX",
-  "description": "Compress the selected file in Finder with CompressX.",
+  "description": "Compress files easily, with up to 90% file size reduction",
   "icon": "compressx-icon.png",
   "author": "hieudinh",
   "categories": [
@@ -11,10 +11,10 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "compressFile",
-      "title": "Compress File",
+      "name": "compressFiles",
+      "title": "Compress Files",
       "subtitle": "CompressX",
-      "description": "Compress selected file with CompressX",
+      "description": "Compress selected files with CompressX",
       "mode": "view"
     }
   ],
