@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import path from "path";
 
 export default function Command() {
-  const [isInstalled, setIsInstalled] = useState<boolean | null>(true);
+  const [isInstalled, setIsInstalled] = useState<boolean | null>(false);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [fileTypes, setFileTypes] = useState<Set<"video" | "image">>(new Set());
   const [quality, setQuality] = useState<string>("high");
@@ -13,7 +13,7 @@ export default function Command() {
   const [imageFormat, setImageFormat] = useState<string>("same");
 
   useEffect(() => {
-    // checkCompressXInstallation().then(setIsInstalled);
+    checkCompressXInstallation().then(setIsInstalled);
     getSelectedFinderItems().then((items) => {
       if (items.length > 0) {
         const paths = items.map(item => item.path);

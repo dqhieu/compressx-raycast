@@ -16,6 +16,13 @@
       "subtitle": "CompressX",
       "description": "Compress selected files with CompressX",
       "mode": "view"
+    },
+    {
+      "name": "importFiles",
+      "title": "Import Files",
+      "subtitle": "CompressX",
+      "description": "Import selected files into CompressX",
+      "mode": "no-view"
     }
   ],
   "dependencies": {
